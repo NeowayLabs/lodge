@@ -1,0 +1,12 @@
+name: lodge-actions
+
+on: [push]
+
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: make build
+      - run: make lint
+      - run: make check
