@@ -17,14 +17,16 @@ def _get_log_level_from_env_var(logger_name: str) -> str:
 
 def _get_format():
     DEFAULT_LOG_ENV = os.environ.get("LOG_ENV", "PROD")
-    BASE_STRUCTURED = {
-        "message": "%(message)s",
-        "timestamp": "%(asctime)s",
-        "level": "%(levelname)s",
-    }
+    LOG_BASE_FIELDS = eval(
+        os.environ.get(
+            "LOG_BASE_FIELDS",
+            '{"message":"%(message)s","timestamp":"%(asctime)s","level":"%(levelname)s",}'
+        )
+    )
+    LOG_EXTRA_FIELDS = eval(os.environ.get("LOG_EXTRA_FIELDS", '{}'))
 
     if DEFAULT_LOG_ENV == "PROD":
-        log_format = json.dumps(BASE_STRUCTURED)
+        log_format = json.dumps({**LOG_BASE_FIELDS, **LOG_EXTRA_FIELDS})
     else:
         log_format = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
 
