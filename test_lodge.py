@@ -96,3 +96,31 @@ def test_set_format_on_dev(stream, monkeypatch):
     assert log_entry_splitted[-1] == " Here goes a message\n"
     assert log_entry_splitted[1] == " INFO "
     assert log_entry_splitted[2] == " testlog "
+
+
+def test_set_extra_fields_on_logging(stream, monkeypatch):
+    monkeypatch.setenv("LOG_EXTRA_FIELDS", '{"program":{"name":"testlog","version":"v1"}}')
+    with import_lodge() as lodge:
+        log = lodge.get_logger("testlog")
+        log.info("Logging with extra fields")
+
+    log_entry = stream.read()
+    log_structured = json.loads(log_entry)
+
+    assert log_structured["message"] == "Logging with extra fields"
+    assert "program" in log_structured.keys()
+    assert log_structured["program"]["name"] == "testlog"
+    assert log_structured["program"]["version"] == "v1"
+
+
+def test_set_base_fields_on_logging(stream, monkeypatch):
+    monkeypatch.setenv("LOG_BASE_FIELDS", '{"message":"%(message)s","anotherField":"yes"}')
+    with import_lodge() as lodge:
+        log = lodge.get_logger("testlog")
+        log.info("Logging other base fields")
+
+    log_entry = stream.read()
+    log_structured = json.loads(log_entry)
+
+    assert log_structured["message"] == "Logging other base fields"
+    assert log_structured["anotherField"] == "yes"
