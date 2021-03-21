@@ -124,3 +124,32 @@ def test_set_base_fields_on_logging(stream, monkeypatch):
 
     assert log_structured["message"] == "Logging other base fields"
     assert log_structured["anotherField"] == "yes"
+
+
+def test_import_proxy_log(stream, monkeypatch):
+    monkeypatch.setenv("LOG_ENV", "DEV")
+
+    class StubFrame:
+        f_globals = {"__name__": "package.module.submodule"}
+
+    with import_lodge() as lodge:
+        monkeypatch.setattr(lodge, "currentframe", lambda x: StubFrame())
+        lodge.log.info("logging with lodge.log")
+
+    log_entry = stream.read()
+    log_entry_splitted = log_entry.split('|')
+
+    assert log_entry_splitted[-1] == " logging with lodge.log\n"
+    assert log_entry_splitted[1] == " INFO "
+    assert log_entry_splitted[2] == " package.module.submodule "
+
+
+def test_proxy_log_warn_with_level_error_should_not_log(stream, monkeypatch):
+    monkeypatch.setenv("LOG_LEVEL", "ERROR")
+
+    from lodge import log
+    log.warn("warn")
+
+    log_entry = stream.read()
+
+    assert log_entry == ""
