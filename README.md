@@ -16,12 +16,12 @@ A structured logging package in Python simple to use.
 Add to your setup as:
 ```python
   ...
-  " lodge @ https://github.com/NeowayLabs/lodge.git@<VERSION>#egg=lodge",
+  " lodge==<VERSION>",
   ...
 ```
 or install with pip
 ```
-pip install git+https://github.com/NeowayLabs/lodge.git
+pip install lodge
 ```
 
 ## Getting Started
