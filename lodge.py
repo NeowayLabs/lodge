@@ -20,10 +20,10 @@ def _get_default_format():
     LOG_BASE_FIELDS = eval(
         os.environ.get(
             "LOG_BASE_FIELDS",
-            '{"message":"%(message)s","timestamp":"%(asctime)s","level":"%(levelname)s",}'
+            '{"message":"%(message)s","timestamp":"%(asctime)s","level":"%(levelname)s",}',
         )
     )
-    LOG_EXTRA_FIELDS = eval(os.environ.get("LOG_EXTRA_FIELDS", '{}'))
+    LOG_EXTRA_FIELDS = eval(os.environ.get("LOG_EXTRA_FIELDS", "{}"))
 
     if DEFAULT_LOG_ENV == "PROD":
         log_format = json.dumps({**LOG_BASE_FIELDS, **LOG_EXTRA_FIELDS})
@@ -45,9 +45,10 @@ def _add_default_handler(logger: logging.Logger):
 
 
 # https://github.com/python/cpython/blob/e8e341993e3f80a3c456fb8e0219530c93c13151/Lib/logging/__init__.py#L162
-if hasattr(sys, '_getframe'):
+if hasattr(sys, "_getframe"):
     currentframe = lambda level: sys._getframe(level)  # noqa
 else:  # pragma: no cover
+
     def currentframe(level: int):
         """Return the frame object for the caller's stack frame."""
         try:
@@ -81,6 +82,7 @@ class _ProxyLogger:
     not exists it will create a new one based on the callers `__name__`.
     The created logger will have the config loaded from the env vars.
     """
+
     def __init__(self):
         self.manager = logging.root.manager
 
