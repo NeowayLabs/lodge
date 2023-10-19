@@ -153,3 +153,21 @@ def test_proxy_log_warn_with_level_error_should_not_log(stream, monkeypatch):
     log_entry = stream.read()
 
     assert log_entry == ""
+
+
+def test_proxy_exception_method(stream):
+    with import_lodge() as lodge:
+        log = lodge.get_logger("test")
+        try:
+            1/0
+        except ZeroDivisionError:
+            log.exception("test_message")
+
+    log_entry = stream.read()
+    json_entry = log_entry.split("\n")[0]
+    log_structured = json.loads(json_entry)
+
+    assert log_structured["message"] == "test_message"
+    assert log_structured["level"] == "ERROR"
+    assert "Traceback (most recent call last)" in log_entry
+    assert "ZeroDivisionError: division by zero" in log_entry
