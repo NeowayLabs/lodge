@@ -118,6 +118,9 @@ class _ProxyLogger:
     def error(self, msg, *args, **kwargs):
         self._get_logger().error(msg, *args, **kwargs)
 
+    def exception(self, msg, *args, **kwargs):
+        self._get_logger().exception(msg, *args, **kwargs)
+
     def fatal(self, msg, *args, **kwargs):
         self._get_logger().fatal(msg, *args, **kwargs)
 
