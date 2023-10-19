@@ -154,12 +154,13 @@ def test_proxy_log_warn_with_level_error_should_not_log(stream, monkeypatch):
 
     assert log_entry == ""
 
+
 def test_proxy_exception_method(stream):
     with import_lodge() as lodge:
         log = lodge.get_logger("test")
         try:
             1/0
-        except ZeroDivisionError as e:
+        except ZeroDivisionError:
             log.exception("test_message")
 
     log_entry = stream.read()
